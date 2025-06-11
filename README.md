@@ -40,7 +40,7 @@ FROM `majestic-post-448508-p3.lindy_check_20250610.data2`;
 
 # 上面都不會成功，直接換成python去做RE
 
-# N=26991 中 discharge text有東西只有20058 筆資料
+# N=26991 中 discharge text有東西，有20058 筆資料
 共10615 個
 非 ___開頭 9578
 ___ 開頭 1037
