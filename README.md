@@ -26,7 +26,7 @@ left join  `majestic-post-448508-p3.mimic4_v2_2_note.discharge` as B
 on A.subject_id = B.subject_id and A.hadm_id = B.hadm_id;
 
 # 5. 從 text 欄位中撈出title。
-# 該行結尾是冒號，冒號後沒東西的，逐行讀取，distinct後可以知道title有甚麼
+#### 該行結尾是冒號，冒號後沒東西的，逐行讀取，distinct後可以知道
 CREATE OR REPLACE TABLE `majestic-post-448508-p3.lindy_check_20250610.data2_title` AS
 SELECT
   *,
