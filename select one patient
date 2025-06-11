@@ -1,1 +1,23 @@
 ### 從data2 中選出一個骨科病人，再分成不同sheet存出來
+
+-- create table `majestic-post-448508-p3.lindy_check_20250610.data2_title` as 
+-- select *,
+-- (select regexp_extract(l, r'^(.*?):\s*$')
+-- from unnest(split(text, r'\r?\n')) as l
+-- where regexp_contains(l, r'^.*:\s*$')) as text_title
+-- from `majestic-post-448508-p3.lindy_check_20250610.data2`
+
+
+
+CREATE OR REPLACE TABLE `majestic-post-448508-p3.lindy_check_20250610.data2_title` AS
+SELECT
+  *,
+  (
+    SELECT REGEXP_EXTRACT(TRIM(REGEXP_REPLACE(l, r'[：]', ':')), r'^(.*?):\s*$')
+    FROM UNNEST(SPLIT(text, r'\r?\n')) AS l
+    WHERE REGEXP_CONTAINS(TRIM(REGEXP_REPLACE(l, r'[：]', ':')), r'^.*:\s*$')
+    LIMIT 1
+  ) AS text_title
+FROM `majestic-post-448508-p3.lindy_check_20250610.data2`;
+
+
