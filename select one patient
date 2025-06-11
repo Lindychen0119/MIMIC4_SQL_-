@@ -1,17 +1,209 @@
+12680354
+24399147
 
+### data5 是data2 串emar串labevents後選出emar_id/lab/text有內容的
 ## 從data2 中選出一個骨科病人，再分成不同sheet存出來
-### 選取病人 subject_id = 18777047 跟 hadm_id = 28424277
+### 選取病人 subject_id = 12680354 跟 hadm_id = 24399147
 
-create table `majestic-post-448508-p3.lindy_check_20250610.18777047` as 
+create table `majestic-post-448508-p3.lindy_check_20250610.12680354` as 
 select *
 from `majestic-post-448508-p3.lindy_check_20250610.data2`
-where subject_id = 18777047 and hadm_id = 28424277;
+where subject_id = 12680354 and hadm_id = 24399147;
 
 
 ## 串各種table 串一個要存成一個sheet，所以只能一個個串，不要一次串多個
-###diagnoses_icd 
-create table `majestic-post-448508-p3.lindy_check_20250610.18777047_diagnoses_icd` as 
+###diagnoses_icd (N=7)
+create table `majestic-post-448508-p3.lindy_check_20250610.12680354_diagnoses_icd` as 
 select A.*, B.* except(subject_id, hadm_id),
-from `majestic-post-448508-p3.lindy_check_20250610.18777047` as A
+from `majestic-post-448508-p3.lindy_check_20250610.12680354` as A
 left join `majestic-post-448508-p3.mimic4_v3_1_hosp.diagnoses_icd` as B
 on A.subject_id = B.subject_id and A.hadm_id = B.hadm_id;
+
+###drgcodes (N=2)
+create table `majestic-post-448508-p3.lindy_check_20250610.12680354_drgcodes` as 
+select A.*, B.* except(subject_id, hadm_id),
+from `majestic-post-448508-p3.lindy_check_20250610.12680354` as A
+left join `majestic-post-448508-p3.mimic4_v3_1_hosp.drgcodes` as B
+on A.subject_id = B.subject_id and A.hadm_id = B.hadm_id;
+
+
+
+###emar (N=298)
+create table `majestic-post-448508-p3.lindy_check_20250610.12680354_emar` as 
+select A.*, B.emar_id,
+  B.emar_seq,
+  B.poe_id,
+  B.pharmacy_id,
+  B.enter_provider_id,
+  B.charttime as emar_charttime,
+  B.medication,
+  B.event_txt,
+  B.scheduletime,
+  B.storetime as emar_storetime,
+from `majestic-post-448508-p3.lindy_check_20250610.12680354` as A
+left join `majestic-post-448508-p3.mimic4_v3_1_hosp.emar` as B
+on A.subject_id = B.subject_id and A.hadm_id = B.hadm_id;
+
+###emar_detail (N=627)
+create table `majestic-post-448508-p3.lindy_check_20250610.12680354_emardetail` as 
+select A.*, B.*except(subject_id, emar_id, emar_seq, pharmacy_id),
+from `majestic-post-448508-p3.lindy_check_20250610.12680354_emar` as A
+left join `majestic-post-448508-p3.mimic4_v3_1_hosp.emar_detail` as B
+on A.subject_id = B.subject_id and A.emar_id = B.emar_id;
+
+###hcpcsevents (N=1)
+create table `majestic-post-448508-p3.lindy_check_20250610.12680354_hcpcsevents` as 
+select A.*, B.*except(subject_id,hadm_id),
+from `majestic-post-448508-p3.lindy_check_20250610.12680354` as A
+left join `majestic-post-448508-p3.mimic4_v3_1_hosp.hcpcsevents` as B
+on A.subject_id = B.subject_id and A.hadm_id = B.hadm_id;
+
+###labevents (N=255)
+create table `majestic-post-448508-p3.lindy_check_20250610.12680354_labevents` as 
+select A.*,   B.labevent_id,
+  B.specimen_id,
+  B.itemid,
+  B.order_provider_id,
+  B.charttime AS lab_charttime,
+  B.storetime AS lab_storetime,
+  B.value,
+  B.valuenum,
+  B.valueuom,
+  B.flag,
+  B.ref_range_lower,
+  B.ref_range_upper,
+  B.flag AS _flag,
+  B.priority,
+  B.comments
+from `majestic-post-448508-p3.lindy_check_20250610.12680354` as A
+left join `majestic-post-448508-p3.mimic4_v3_1_hosp.labevents` as B
+on A.subject_id = B.subject_id and A.hadm_id = B.hadm_id;
+
+### microbiologyevents (N=5)
+create table `majestic-post-448508-p3.lindy_check_20250610.12680354_micro` as 
+select   A.*,   
+  B.microevent_id,
+  B.micro_specimen_id,
+  B.order_provider_id,
+  B.chartdate,
+  B.charttime AS micro_charttime,
+  B.spec_itemid,
+  B.spec_type_desc,
+  B.test_seq,
+  B.storedate, 
+  B.storetime AS micro_storetime,
+  B.test_itemid,
+  B.test_name,
+  B.org_itemid,
+  B.org_name,
+  B.isolate_num,
+  B.quantity,
+  B.ab_itemid,
+  B.ab_name,
+  B.dilution_text,
+  B.dilution_comparison,
+  B.dilution_value,
+  B.interpretation,
+  B.comments
+FROM `majestic-post-448508-p3.lindy_check_20250610.12680354` AS A
+LEFT JOIN `majestic-post-448508-p3.mimic4_v3_1_hosp.microbiologyevents` AS B
+ON A.subject_id = B.subject_id AND A.hadm_id = B.hadm_id;
+
+
+### omr (N=8)
+create table `majestic-post-448508-p3.lindy_check_20250610.12680354_omr` as 
+select A.*, B.*except(subject_id),
+from `majestic-post-448508-p3.lindy_check_20250610.12680354` as A
+left join `majestic-post-448508-p3.mimic4_v3_1_hosp.omr` as B
+on A.subject_id = B.subject_id;
+
+### omr (N=8)
+create table `majestic-post-448508-p3.lindy_check_20250610.12680354_omr` as 
+select A.*, B.*except(subject_id),
+from `majestic-post-448508-p3.lindy_check_20250610.12680354` as A
+left join `majestic-post-448508-p3.mimic4_v3_1_hosp.omr` as B
+on A.subject_id = B.subject_id;
+
+### pharmacy (N=30)
+create table `majestic-post-448508-p3.lindy_check_20250610.12680354_pharmacy` as 
+select A.*, B.*except(subject_id, hadm_id),
+from `majestic-post-448508-p3.lindy_check_20250610.12680354` as A
+left join `majestic-post-448508-p3.mimic4_v3_1_hosp.pharmacy` as B
+on A.subject_id = B.subject_id and A.hadm_id = B.hadm_id;
+
+###  poe(N=30)
+create table `majestic-post-448508-p3.lindy_check_20250610.12680354_poe` as 
+select A.*, B.*except(subject_id, hadm_id),
+from `majestic-post-448508-p3.lindy_check_20250610.12680354` as A
+left join `majestic-post-448508-p3.mimic4_v3_1_hosp.poe` as B
+on A.subject_id = B.subject_id and A.hadm_id = B.hadm_id;
+
+### poe_detail (N=97)
+create table `majestic-post-448508-p3.lindy_check_20250610.12680354_poedetail` as 
+select A.*, B.*except(subject_id, poe_id, poe_seq),
+from `majestic-post-448508-p3.lindy_check_20250610.12680354_poe` as A
+left join `majestic-post-448508-p3.mimic4_v3_1_hosp.poe_detail` as B
+on A.subject_id = B.subject_id and A.poe_id = B.poe_id;
+
+
+### prescriptions (N=31)
+create table `majestic-post-448508-p3.lindy_check_20250610.12680354_prescrip` as 
+select A.*, B.*except(subject_id, hadm_id),
+from `majestic-post-448508-p3.lindy_check_20250610.12680354` as A
+left join `majestic-post-448508-p3.mimic4_v3_1_hosp.prescriptions` as B
+on A.subject_id = B.subject_id and A.hadm_id = B.hadm_id;
+
+### procedure (N=3)
+create table `majestic-post-448508-p3.lindy_check_20250610.12680354_procedure` as 
+select A.*, B.*except(subject_id, hadm_id),
+from `majestic-post-448508-p3.lindy_check_20250610.12680354` as A
+left join `majestic-post-448508-p3.mimic4_v3_1_hosp.procedures_icd` as B
+on A.subject_id = B.subject_id and A.hadm_id = B.hadm_id;
+
+
+### transfers (N=4)
+create table `majestic-post-448508-p3.lindy_check_20250610.12680354_transfers` as 
+select A.*, B.*except(subject_id, hadm_id),
+from `majestic-post-448508-p3.lindy_check_20250610.12680354` as A
+left join `majestic-post-448508-p3.mimic4_v3_1_hosp.transfers` as B
+on A.subject_id = B.subject_id and A.hadm_id = B.hadm_id;
+
+### 串 Note
+### discharge_detail (N=3)
+create table `majestic-post-448508-p3.lindy_check_20250610.12680354_dischargedetail` as 
+select A.*, B.*except(subject_id, note_id),
+from `majestic-post-448508-p3.lindy_check_20250610.12680354` as A
+left join `majestic-post-448508-p3.mimic4_v2_2_note.discharge_detail` as B
+on A.subject_id = B.subject_id;
+
+### radiology (N=5)
+create table `majestic-post-448508-p3.lindy_check_20250610.12680354_radiology` as 
+select  A.*,
+  B.note_type AS radio_note_type,
+  B.note_seq AS radio_note_seq,
+  B.charttime AS radio_charttime,
+  B.storetime AS radio_storetime,
+  B.text AS note_text
+from `majestic-post-448508-p3.lindy_check_20250610.12680354` as A
+left join `majestic-post-448508-p3.mimic4_v2_2_note.radiology` as B
+on A.subject_id = B.subject_id and A.hadm_id = B.hadm_id;
+
+### radiology_detail (N=38)
+create table `majestic-post-448508-p3.lindy_check_20250610.12680354_radiologydetail` as 
+select  A.*, B.* except (subject_id, note_id),
+from `majestic-post-448508-p3.lindy_check_20250610.12680354` as A
+left join `majestic-post-448508-p3.mimic4_v2_2_note.radiology_detail` as B
+on A.subject_id = B.subject_id;
+
+
+
+
+##下載
+SELECT * FROM majestic-post-448508-p3.lindy_check_20250610.12680354
+
+
+
+
+
+
+
