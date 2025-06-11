@@ -131,7 +131,7 @@ from `majestic-post-448508-p3.lindy_check_20250610.12680354` as A
 left join `majestic-post-448508-p3.mimic4_v3_1_hosp.pharmacy` as B
 on A.subject_id = B.subject_id and A.hadm_id = B.hadm_id;
 
-###  poe(N=30)
+###  poe(N=92)
 create table `majestic-post-448508-p3.lindy_check_20250610.12680354_poe` as 
 select A.*, B.*except(subject_id, hadm_id),
 from `majestic-post-448508-p3.lindy_check_20250610.12680354` as A
