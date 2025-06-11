@@ -45,7 +45,7 @@ FROM `majestic-post-448508-p3.lindy_check_20250610.data2`;
 非 ___開頭 1012
 ___ 開頭 87
 
-
+### 20250611_title_extract.csv 是 majestic-post-448508-p3.lindy_check_20250610.data2
 
 
 
