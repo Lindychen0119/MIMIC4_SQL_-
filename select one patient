@@ -1,23 +1,17 @@
-### 從data2 中選出一個骨科病人，再分成不同sheet存出來
 
--- create table `majestic-post-448508-p3.lindy_check_20250610.data2_title` as 
--- select *,
--- (select regexp_extract(l, r'^(.*?):\s*$')
--- from unnest(split(text, r'\r?\n')) as l
--- where regexp_contains(l, r'^.*:\s*$')) as text_title
--- from `majestic-post-448508-p3.lindy_check_20250610.data2`
+## 從data2 中選出一個骨科病人，再分成不同sheet存出來
+### 選取病人 subject_id = 18777047 跟 hadm_id = 28424277
 
-
-
-CREATE OR REPLACE TABLE `majestic-post-448508-p3.lindy_check_20250610.data2_title` AS
-SELECT
-  *,
-  (
-    SELECT REGEXP_EXTRACT(TRIM(REGEXP_REPLACE(l, r'[：]', ':')), r'^(.*?):\s*$')
-    FROM UNNEST(SPLIT(text, r'\r?\n')) AS l
-    WHERE REGEXP_CONTAINS(TRIM(REGEXP_REPLACE(l, r'[：]', ':')), r'^.*:\s*$')
-    LIMIT 1
-  ) AS text_title
-FROM `majestic-post-448508-p3.lindy_check_20250610.data2`;
+create table `majestic-post-448508-p3.lindy_check_20250610.18777047` as 
+select *
+from `majestic-post-448508-p3.lindy_check_20250610.data2`
+where subject_id = 18777047 and hadm_id = 28424277;
 
 
+## 串各種table 串一個要存成一個sheet，所以只能一個個串，不要一次串多個
+###diagnoses_icd 
+create table `majestic-post-448508-p3.lindy_check_20250610.18777047_diagnoses_icd` as 
+select A.*, B.* except(subject_id, hadm_id),
+from `majestic-post-448508-p3.lindy_check_20250610.18777047` as A
+left join `majestic-post-448508-p3.mimic4_v3_1_hosp.diagnoses_icd` as B
+on A.subject_id = B.subject_id and A.hadm_id = B.hadm_id;
